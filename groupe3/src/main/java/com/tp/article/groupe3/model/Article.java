@@ -11,14 +11,12 @@ import jakarta.persistence.ManyToOne;
 public class Article {
 
 	@Id
-
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private float prix;
 	private String nom;
 	private int quantite;
 	private int pointsFidelite;
-
 	@ManyToOne
 	@JoinColumn(name = "categorie_id")
 	private Categorie categorie;

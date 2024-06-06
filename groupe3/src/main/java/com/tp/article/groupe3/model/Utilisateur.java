@@ -18,7 +18,7 @@ public class Utilisateur {
 	private String nom;
 	private String prenom;
 	private String email;
-	@OneToMany(mappedBy = "panier")
+	@OneToMany(mappedBy = "utilisateur")
 	private List<Panier> paniersDeLUtilisateur = new ArrayList<>();
 	private int pointsFidelite;
 

@@ -12,10 +12,11 @@ import jakarta.persistence.OneToMany;
 @Entity
 public class Categorie {
 	@Id
-	
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
+	private String nom;
+	@OneToMany(mappedBy = "categorie")
+	private List<Article> articles = new ArrayList<>();
 
 	public Categorie() {
 		super();
@@ -45,11 +46,7 @@ public class Categorie {
 		this.articles = articles;
 	}
 
-	private String nom;
-
-	@OneToMany(mappedBy = "article")
-
-	private List<Article> articles = new ArrayList<>();
+	
 
 
 }
