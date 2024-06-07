@@ -16,10 +16,10 @@ public class LigneCommande {
 	private int quantite;
 	@ManyToOne
 	@JoinColumn(name = "article_id")
-	private Article article;
+	private int articleId;
 	@ManyToOne
 	@JoinColumn(name = "panier_id")
-	private Panier panier;
+	private int panierId;
 	
 	public LigneCommande() {
 		super();
@@ -41,20 +41,20 @@ public class LigneCommande {
 		this.quantite = quantite;
 	}
 
-	public Article getArticle() {
-		return article;
+	public int getArticleId() {
+		return articleId;
 	}
 
-	public void setArticle(Article article) {
-		this.article = article;
+	public void setArticleId(int articleId) {
+		this.articleId = articleId;
 	}
 
-	public Panier getPanier() {
-		return panier;
+	public int getPanier() {
+		return panierId;
 	}
 
-	public void setPanier(Panier panier) {
-		this.panier = panier;
+	public void setPanierId(int panierId) {
+		this.panierId = panierId;
 	}
 	
 
