@@ -2,18 +2,18 @@ package com.tp.article.groupe3.service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.tp.article.groupe3.dao.LigneCommandeDao;
 import com.tp.article.groupe3.dao.PanierDao;
 import com.tp.article.groupe3.model.Panier;
 import com.tp.article.groupe3.model.Status;
 import com.tp.article.groupe3.model.Utilisateur;
 
+@Component
 public class PanierService {
 
 	@Autowired
@@ -40,13 +40,13 @@ public class PanierService {
 		if (utilisateur == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found");
 		} 
-		Panier panier = panierDao.getPanierByUtilisateur(userId);
+		/*Panier panier = panierDao.getPanierParUtilisateur(userId);
 		if (panier == null) {
 			panier = createNewPanier();
 			panier.setUtilisateur(utilisateur);
 			panierDao.save(panier);
 
-		}
+		}*/
 		boolean existsProduct = false;
 		/***
 		 * for ( LigneCommande ligneCommande: panier.getLignesCommande()) {
