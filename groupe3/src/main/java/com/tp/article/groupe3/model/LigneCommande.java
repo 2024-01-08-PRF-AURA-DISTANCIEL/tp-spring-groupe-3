@@ -52,8 +52,6 @@ public class LigneCommande {
 	public void setPanier(Panier panier) {
 		this.panier = panier;
 	}
-	
-
 
 
 }

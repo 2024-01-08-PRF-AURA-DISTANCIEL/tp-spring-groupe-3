@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,6 +17,7 @@ import com.tp.article.groupe3.model.Panier;
 import com.tp.article.groupe3.model.Status;
 import com.tp.article.groupe3.model.Utilisateur;
 
+@Component
 public class PanierService {
 
 	@Autowired
@@ -45,24 +47,24 @@ public class PanierService {
 		if (utilisateur == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found");
 		} 
-		Panier panier = panierDao.getPanierByUtilisateur(userId);
+		/*Panier panier = panierDao.getPanierParUtilisateur(userId);
 		if (panier == null) {
 			panier = createNewPanier();
 			panier.setUtilisateur(utilisateur);
 			panierDao.save(panier);
 
-		}
+		}*/
 		boolean existsProduct = false;
 		
-		for (LigneCommande ligneCommande : panier.getLignesCommande()) {
-
-			if (ligneCommande.getArticle().getId() == articleId) {
-				ligneCommande.getArticle().setQuantite(ligneCommande.getArticle().getQuantite() + quantite);
-				existsProduct = true;
-				break;
-			}
-
-		}
+		/*
+		 * for (LigneCommande ligneCommande : panier.getLignesCommande()) {
+		 * 
+		 * if (ligneCommande.getArticle().getId() == articleId) {
+		 * ligneCommande.getArticle().setQuantite(ligneCommande.getArticle().getQuantite
+		 * () + quantite); existsProduct = true; break; }
+		 * 
+		 * }
+		 */
 
 		if (!existsProduct) {
 			LigneCommande ligneCommande = new LigneCommande();
@@ -92,7 +94,7 @@ public class PanierService {
 		}
 
 		public Status validatePanier(int utilisateurId) throws HttpClientErrorException {
-			Panier panier = panierDao.getPanierByUtilisateur(utilisateurId);
+			/*Panier panier = panierDao.getPanierByUtilisateur(utilisateurId);
 
 			if (panier == null) {
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -117,7 +119,8 @@ public class PanierService {
 					}
 					panier.setStatus(Status.COMMANDE_VALIDEE);
 					
-					return panier.getStatus();
+					return panier.getStatus();*/
+			return null;
 
 
 
@@ -128,6 +131,6 @@ public class PanierService {
 
 			}
 
-		}
+
 
 }
