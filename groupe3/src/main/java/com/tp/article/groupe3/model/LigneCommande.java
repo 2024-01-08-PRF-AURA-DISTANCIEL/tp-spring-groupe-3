@@ -16,47 +16,44 @@ public class LigneCommande {
 	private int quantite;
 	@ManyToOne
 	@JoinColumn(name = "article_id")
-	private int articleId;
+	private Article article;
 	@ManyToOne
 	@JoinColumn(name = "panier_id")
-	private int panierId;
+	private Panier panier;
 	
 	public LigneCommande() {
 		super();
 	}
-
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
 	public int getQuantite() {
 		return quantite;
 	}
-
 	public void setQuantite(int quantite) {
 		this.quantite = quantite;
 	}
 
-	public int getArticleId() {
-		return articleId;
+	public Article getArticle() {
+		return article;
 	}
 
-	public void setArticleId(int articleId) {
-		this.articleId = articleId;
+	public void setArticle(Article article) {
+		this.article = article;
 	}
 
-	public int getPanier() {
-		return panierId;
+	public Panier getPanier() {
+		return panier;
 	}
 
-	public void setPanierId(int panierId) {
-		this.panierId = panierId;
+	public void setPanier(Panier panier) {
+		this.panier = panier;
 	}
 	
+
 
 
 }

@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.tp.article.groupe3.dao.ArticleDao;
 import com.tp.article.groupe3.dao.LigneCommandeDao;
 import com.tp.article.groupe3.dao.PanierDao;
+import com.tp.article.groupe3.model.LigneCommande;
 import com.tp.article.groupe3.model.Panier;
 import com.tp.article.groupe3.model.Status;
 import com.tp.article.groupe3.model.Utilisateur;
@@ -23,6 +25,9 @@ public class PanierService {
 	private PanierDao panierDao;
 	@Autowired
 	private UtilisateurService utilisateurService;
+
+	@Autowired
+	private ArticleDao articleDao;
 
 	public Panier createNewPanier() {
 
@@ -48,24 +53,27 @@ public class PanierService {
 
 		}
 		boolean existsProduct = false;
-		/***
-		 * for ( LigneCommande ligneCommande: panier.getLignesCommande()) {
-		 * 
-		 * 
-		 * if(ligneCommande.getArticleId().getId() == articleId) {
-		 * ligneCommande.getArticle().setQuantite(ligneCommande.getArticle().getQuantite()
-		 * + quantite); existsProduct = true; break; }
-		 * 
-		 * }
-		 * 
-		 * if (!existsProduct) { LigneCommande ligneCommande = new LigneCommande();
-		 * ligneCommande.setArticleId(articleId); ligneCommande.setQuantite(quantite);
-		 * 
-		 * ligneCommande.setPanierId(panier.getId());
-		 * ligneCommandeDao.save(ligneCommande);
-		 * 
-		 * }
-		 */
+		
+		for (LigneCommande ligneCommande : panier.getLignesCommande()) {
+
+			if (ligneCommande.getArticle().getId() == articleId) {
+				ligneCommande.getArticle().setQuantite(ligneCommande.getArticle().getQuantite() + quantite);
+				existsProduct = true;
+				break;
+			}
+
+		}
+
+		if (!existsProduct) {
+			LigneCommande ligneCommande = new LigneCommande();
+			// ligneCommande.setArticleId(articleId);
+			ligneCommande.setQuantite(quantite);
+
+			// ligneCommande.setPanierId(panier.getId());
+			ligneCommandeDao.save(ligneCommande);
+
+		}
+		 
 
 		
 
@@ -83,20 +91,43 @@ public class PanierService {
 		}
 		}
 
-		/***
-		 * public Utilisateur validatePanier(int utilisateurId) throws
-		 * HttpClientErrorException { Panier panier =
-		 * panierDao.getPanierByUtilisateur(utilisateurId);
-		 * 
-		 * if (panier == null) { // throw new ResponseStatusException(HttpStatus., "Cet
-		 * utilisateur n'a aucun // panier au status panier");
-		 * 
-		 * } else {
-		 * 
-		 * 
-		 * 
-		 * }
-		 * 
-		 * }
-		 */
+		public Status validatePanier(int utilisateurId) throws HttpClientErrorException {
+			Panier panier = panierDao.getPanierByUtilisateur(utilisateurId);
+
+			if (panier == null) {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+						"Cet utilisateur n'a aucun  panier au status panier");
+
+			} else {
+
+				for (LigneCommande ligneCommande : panier.getLignesCommande()) {
+
+					int quantiteEnStock = articleDao.getStockForArticle(ligneCommande.getArticle().getId());
+					
+					if(quantiteEnStock < ligneCommande.getQuantite()) {
+						throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Pas assez de stock pour honorer la commande");
+					}
+				}
+
+				for (LigneCommande ligneCommande : panier.getLignesCommande()) {
+					int quantiteEnStock = articleDao.getStockForArticle(ligneCommande.getArticle().getId());
+					quantiteEnStock -= ligneCommande.getQuantite();
+					articleDao.updateStockForArticle(ligneCommande.getArticle().getId(), quantiteEnStock);
+
+					}
+					panier.setStatus(Status.COMMANDE_VALIDEE);
+					
+					return panier.getStatus();
+
+
+
+
+
+
+
+
+			}
+
+		}
+
 }
