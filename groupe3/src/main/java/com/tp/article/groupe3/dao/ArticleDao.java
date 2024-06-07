@@ -1,11 +1,11 @@
 package com.tp.article.groupe3.dao;
 
 import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import com.tp.article.groupe3.model.Article;
 
-public interface ArticleDao extends JpaRepository<Article, Long> {
+@Repository
+public interface ArticleDao extends CrudRepository<Article, Integer> {
 	List<Article> findByNomContainingIgnoreCase(String nom);
 }
