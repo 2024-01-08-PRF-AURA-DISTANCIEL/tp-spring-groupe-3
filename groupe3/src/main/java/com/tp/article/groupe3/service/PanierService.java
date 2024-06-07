@@ -32,53 +32,40 @@ public class PanierService {
 	private ArticleDao articleDao;
 
 	public Panier createNewPanier() {
-
-
 		Panier panier = new Panier();
 		panier.setDate_creation(LocalDateTime.now());
 		panier.setStatus(Status.PANIER);
-
 		return panier;
-
 	}
 
 	public void addArticlePanier(int articleId, int userId, int quantite) throws HttpClientErrorException {
 		Utilisateur utilisateur = utilisateurService.get(userId);
 		if (utilisateur == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found");
-		} 
-		/*Panier panier = panierDao.getPanierParUtilisateur(userId);
+		}
+		Panier panier = panierDao.getPanierByUtilisateur(userId);
 		if (panier == null) {
 			panier = createNewPanier();
 			panier.setUtilisateur(utilisateur);
 			panierDao.save(panier);
-
-		}*/
+		}
 		boolean existsProduct = false;
-		
-		/*
-		 * for (LigneCommande ligneCommande : panier.getLignesCommande()) {
-		 * 
-		 * if (ligneCommande.getArticle().getId() == articleId) {
-		 * ligneCommande.getArticle().setQuantite(ligneCommande.getArticle().getQuantite
-		 * () + quantite); existsProduct = true; break; }
-		 * 
-		 * }
-		 */
+
+		for (LigneCommande ligneCommande : panier.getLignesCommande()) {
+			if (ligneCommande.getArticle().getId() == articleId) {
+				ligneCommande.getArticle().setQuantite(ligneCommande.getArticle().getQuantite() + quantite);
+				existsProduct = true;
+				break;
+			}
+		}
 
 		if (!existsProduct) {
 			LigneCommande ligneCommande = new LigneCommande();
-			// ligneCommande.setArticleId(articleId);
+			ligneCommande.setArticle(articleDao.findById(articleId).get());
 			ligneCommande.setQuantite(quantite);
-
-			// ligneCommande.setPanierId(panier.getId());
+			ligneCommande.setPanier(panier);
 			ligneCommandeDao.save(ligneCommande);
-
 		}
-		 
-
-		
-
 
 	}
 
@@ -91,46 +78,32 @@ public class PanierService {
 			Panier panier = OptionalPanier.get();
 			return panier;
 		}
+	}
+
+	public Panier validatePanier(int utilisateurId) throws HttpClientErrorException {
+		Panier panier = panierDao.getPanierByUtilisateur(utilisateurId);
+		if (panier == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+					"Cet utilisateur n'a aucun  panier au status panier");
+		} else {
+			for (LigneCommande ligneCommande : panier.getLignesCommande()) {
+				int quantiteEnStock = articleDao.getStockForArticle(ligneCommande.getArticle().getId());
+				if (quantiteEnStock < ligneCommande.getQuantite()) {
+					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+							"Pas assez de stock pour honorer la commande");
+				}
+			}
+			for (LigneCommande ligneCommande : panier.getLignesCommande()) {
+				int quantiteEnStock = articleDao.getStockForArticle(ligneCommande.getArticle().getId());
+				quantiteEnStock -= ligneCommande.getQuantite();
+				articleDao.updateStockForArticle(ligneCommande.getArticle().getId(),
+						quantiteEnStock);
+			}
+			panier.setStatus(Status.COMMANDE_VALIDEE);
+
+			return panier;
 		}
 
-		public Status validatePanier(int utilisateurId) throws HttpClientErrorException {
-			/*Panier panier = panierDao.getPanierByUtilisateur(utilisateurId);
-
-			if (panier == null) {
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-						"Cet utilisateur n'a aucun  panier au status panier");
-
-			} else {
-
-				for (LigneCommande ligneCommande : panier.getLignesCommande()) {
-
-					int quantiteEnStock = articleDao.getStockForArticle(ligneCommande.getArticle().getId());
-					
-					if(quantiteEnStock < ligneCommande.getQuantite()) {
-						throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Pas assez de stock pour honorer la commande");
-					}
-				}
-
-				for (LigneCommande ligneCommande : panier.getLignesCommande()) {
-					int quantiteEnStock = articleDao.getStockForArticle(ligneCommande.getArticle().getId());
-					quantiteEnStock -= ligneCommande.getQuantite();
-					articleDao.updateStockForArticle(ligneCommande.getArticle().getId(), quantiteEnStock);
-
-					}
-					panier.setStatus(Status.COMMANDE_VALIDEE);
-					
-					return panier.getStatus();*/
-			return null;
-
-
-
-
-
-
-
-
-			}
-
-
+	}
 
 }
