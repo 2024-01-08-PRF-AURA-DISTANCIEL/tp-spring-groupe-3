@@ -55,6 +55,7 @@ public class PanierService {
 			if (ligneCommande.getArticle().getId() == articleId) {
 				ligneCommande.getArticle().setQuantite(ligneCommande.getArticle().getQuantite() + quantite);
 				existsProduct = true;
+				// sauvegarder ligneCommande?
 				break;
 			}
 		}

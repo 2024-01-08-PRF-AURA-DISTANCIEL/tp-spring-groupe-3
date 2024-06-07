@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.tp.article.groupe3.model.Article;
 import com.tp.article.groupe3.service.ArticleService;
 
@@ -26,9 +27,10 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.saveOrUpdateArticle(article));
     }
    
-    /*@GetMapping("/search") public ResponseEntity<List<Article>> searchArticlesByName(@PathVariable("nom") String nom) { 
-        return ResponseEntity.ok(articleService.searchArticlesByName(nom));
-    }*/
+	// GetMapping("/search") public ResponseEntity<List<Article>>
+	// searchArticlesByName(@PathVariable("nom") String nom) {
+	// return ResponseEntity.ok(articleService.searchArticlesByName(nom));
+	// }
    
     @DeleteMapping("/{id}")
 	public void deleteById(@PathVariable("id") Integer id) {
